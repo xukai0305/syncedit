@@ -459,8 +459,8 @@
             <div class="pc-button-section">
                 <div class="shift-controls">
                     <div class="mode-selector">
-                        <button id="modeSelectBtn" class="mode-btn active">🎯 단일 자막</button>
-                        <button id="modeGlobalBtn" class="mode-btn">🌍 전체 적용</button>
+                        <button id="modeSelectBtn" class="mode-btn">🎯 단일 자막</button>
+                        <button id="modeGlobalBtn" class="mode-btn active">🌍 전체 적용</button>
                     </div>
                     <div class="total-shift" id="totalShiftDisplay">📊 누적 조정: 0.0 초</div>
                     <div class="shift-buttons">
@@ -491,8 +491,8 @@
         <div class="mobile-button-section">
             <div class="shift-controls">
                 <div class="mode-selector">
-                    <button id="modeSelectBtnMobile" class="mode-btn active">🎯 단일 자막</button>
-                    <button id="modeGlobalBtnMobile" class="mode-btn">🌍 전체 적용</button>
+                    <button id="modeSelectBtnMobile" class="mode-btn">🎯 단일 자막</button>
+                    <button id="modeGlobalBtnMobile" class="mode-btn active">🌍 전체 적용</button>
                 </div>
                 <div class="total-shift" id="totalShiftDisplayMobile">📊 누적 조정: 0.0 초</div>
                 <div class="shift-buttons">
@@ -1025,7 +1025,7 @@
         if (currentSubtitles.length) renderSubtitleList(videoPlayer.currentTime);
     });
     
-    setMode("single");
+    setMode("global");
 </script>
 </body>
 </html>
