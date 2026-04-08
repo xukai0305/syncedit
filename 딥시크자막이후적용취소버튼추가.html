@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>고트 자막 싱크 스튜디오✨GOAT</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #0f0f17;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .app-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: #1a1a2a;
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            color: #eee;
+        }
+        
+        .responsive-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        @media (min-width: 769px) {
+            .responsive-layout {
+                flex-direction: row;
+                gap: 24px;
+            }
+            .left-panel {
+                flex: 1.2;
+                min-width: 280px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .right-panel {
+                flex: 1.8;
+                min-width: 300px;
+                background: #0f0f1a;
+                border-radius: 24px;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                height: fit-content;
+                max-height: calc(100vh - 150px);
+                border:1px dashed #454545;
+            }
+            .mobile-button-section {
+                display: none;
+            }
+            .pc-button-section {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .left-panel {
+                order: 1;
+            }
+            .right-panel {
+                order: 2;
+            }
+            .pc-button-section {
+                display: none;
+            }
+            .mobile-button-section {
+                display: block;
+                order: 3;
+            }
+            .right-panel {
+                margin-top: 0;
+                max-height: none;
+            }
+        }
+        
+        .video-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #000;
+        }
+        video {
+            width: 100%;
+            border-radius: 20px;
+            background: #000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            display: block;
+        }
+        .subtitle-preview {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+            padding: 12px 16px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+            transition: 0.2s;
+            white-space: pre-wrap;
+            word-break: break-word;
+            z-index: 10;
+        }
+        .subtitle-preview.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .file-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .file-btn {
+            background: #2a2a3c;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            display: inline-block;
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+        }
+        .file-btn:hover {
+            background: #3a3a50;
+            transform: translateY(-1px);
+        }
+        .shift-controls {
+            background: #0a0a12;
+            padding: 16px;
+            border-radius: 24px;
+        }
+        .mode-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            background: #1a1a2a;
+            padding: 6px;
+            border-radius: 48px;
+        }
+        .mode-btn {
+            flex: 1;
+            background: #2a2a3c;
+            border: none;
+            padding: 8px 6px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .mode-btn.active {
+            background: #4a6eff;
+            color: white;
+        }
+        .shift-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+        .shift-buttons button {
+            background: #4a6eff;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            flex: 1;
+            min-width: 60px;
+        }
+        .shift-buttons button:hover {
+            background: #5a7eff;
+            transform: translateY(-1px);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .action-buttons button {
+            flex: 1;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+        }
+        .action-buttons button:hover {
+            transform: translateY(-1px);
+        }
+        button.apply-btn {
+            background: #d4a11e;
+            color: white;
+        }
+        button.apply-btn:hover {
+            background: #e0b12e;
+        }
+        button.reset-btn {
+            background: #3a3a50;
+            color: white;
+        }
+        button.reset-btn:hover {
+            background: #4a4a60;
+        }
+        button.undo-btn {
+            background: #6a4e9e;
+            color: white;
+        }
+        button.undo-btn:hover {
+            background: #7a5eae;
+        }
+        button.save-btn {
+            background: #2e8b6e;
+            color: white;
+            border-radius: 40px;
+            font-weight: bold;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+            flex: 1;
+        }
+        button.save-btn:hover {
+            background: #3a9e7e;
+            transform: translateY(-1px);
+        }
+        .sub-list {
+            max-height: 603px;
+            overflow-y: auto;
+            background: #0f0f17;
+            border-radius: 20px;
+            padding: 8px;
+            scroll-behavior: smooth;
+        }
+        .sub-item {
+            padding: 10px 12px;
+            margin: 6px 0;
+            background: #1e1e2c;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            border-left: 4px solid #4a6eff;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .sub-item.active {
+            background: #2a3a6e;
+            border-left: 4px solid #ffcc44;
+            box-shadow: 0 0 0 2px #ffcc4480;
+        }
+        .sub-item.selected {
+            background: #5a3a6e;
+            border-left: 4px solid #ff8844;
+        }
+        .sub-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .sub-text {
+            flex: 1;
+            word-break: break-word;
+        }
+        .icon-group {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 6px;
+            min-width: auto;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        .icon-btn:hover {
+            color: #ffcc44;
+            background: rgba(255,255,255,0.1);
+            transform: none;
+        }
+        .sub-time {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 4px;
+        }
+        .status {
+            font-size: 0.75rem;
+            background: #00000060;
+            padding: 8px 12px;
+            border-radius: 40px;
+            text-align: center;
+        }
+        .file-status {
+            background: #2a2a3c;
+            padding: 8px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            margin: 8px 0;
+        }
+        .file-status span {
+            color: #ffcc44;
+            font-weight: bold;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .toggle-preview-btn, .translate-all-btn, .translate-stop-btn {
+            background: #2a2a3c;
+            border: none;
+            padding: 6px 11px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .toggle-preview-btn.active {
+            background: #4a6eff;
+        }
+        .toggle-preview-btn:hover, .translate-all-btn:hover, .translate-stop-btn:hover {
+            background: #3a3a50;
+        }
+        .translate-stop-btn {
+            background: #aa3e3e;
+        }
+        .translate-stop-btn:hover {
+            background: #cc4e4e;
+        }
+        .language-select {
+            background: #2a2a3c;
+            border: 1px solid #4a6eff;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        .translate-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin: 0 0 16px 0;
+        }
+        .total-shift {
+            background: #4a6eff30;
+            padding: 10px 12px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            color: #ffcc44;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0.5;
+        }
+        .badge {
+            font-size: 0.7rem;
+            background: #2a2a3c;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .info-text {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 8px;
+        }
+        .auto-scroll-badge {
+            background: #4a6eff40;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+        .edit-input {
+            width: 100%;
+            background: #2a2a3c;
+            border: 1px solid #4a6eff;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        .sub-item.editing-mode {
+            cursor: default;
+        }
+        .sub-item.editing-mode .icon-btn {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        .progress-bar-container {
+            background: #2a2a3c;
+            border-radius: 10px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-bar-fill {
+            background: #4a6eff;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        .progress-text {
+            font-size: 0.7rem;
+            color: #aaa;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .app-container {
+                padding: 16px;
+                border-radius: 20px;
+            }
+            h2 {
+                font-size: 1.2rem;
+                margin-bottom: 12px;
+            }
+            .sub-list {
+                max-height: 200px;
+                font-size: 0.75rem;
+                border:1px dashed #454545;
+            }
+            .shift-buttons button {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+                min-width: 55px;
+            }
+            .action-buttons button {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+            .file-btn, button.save-btn {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+            video {
+                max-height: 200px;
+            }
+            .mode-btn {
+                padding: 6px;
+                font-size: 0.7rem;
+            }
+            .right-panel {
+                max-height: none;
+
+            }
+            .subtitle-preview {
+                font-size: 0.85rem;
+                padding: 8px 12px;
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .shift-buttons {
+                gap: 5px;
+            }
+            .shift-buttons button {
+                padding: 6px 8px;
+                font-size: 0.7rem;
+                min-width: 50px;
+            }
+            .sub-list {
+                max-height: 160px;
+                border:1px dashed #454545;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+     <h2>🎬 고트 자막 싱크 스튜디오 <span class="badge">✨3가지 모드</span><span class="auto-scroll-badge">✨실행취소</span></h2>
+    
+    
+    <div class="responsive-layout">
+        <div class="left-panel">
+            <div class="file-row">
+                <label class="file-btn">📹 영상 선택 (mp4,mov)
+                    <input type="file" id="videoInput" accept="video/mp4,video/quicktime,video/mov,video/avi,video/mkv" style="display: none;">
+                </label>
+                <label class="file-btn">📄 자막 선택 (srt,txt)
+                    <input type="file" id="subInput" accept=".srt,.txt" style="display: none;">
+                </label>
+                <button id="saveSubBtn" class="save-btn">💾 저장 (srt)</button>
+            </div>
+            <div class="file-status" id="videoStatus">
+                🎥 영상: <span id="videoFileName">없음</span>
+            </div>
+            <div class="file-status" id="subtitleStatus">
+                📄 자막: <span id="subtitleFileName">없음</span> <span id="subtitleCount"></span>
+            </div>
+            <div class="video-container">
+                <video id="videoPlayer" controls playsinline style="width:100%;"></video>
+                <div id="subtitlePreview" class="subtitle-preview hidden"></div>
+            </div>  
+            <div class="pc-button-section">
+                <div class="shift-controls">
+                    <div class="mode-selector">
+                        <button id="modeGlobalBtn" class="mode-btn active">🌍 전체 적용</button>
+                        <button id="modeAfterBtn" class="mode-btn">⏩ 이후 적용</button>
+                        <button id="modeSingleBtn" class="mode-btn">🎯 단일 적용</button>
+                    </div>
+                    <div class="total-shift" id="totalShiftDisplay">📊 누적 조정: 0.0 초</div>
+                    <div class="shift-buttons">
+                        <button id="plus3Btn">+3.0</button>
+                        <button id="minus3Btn">-3.0</button>
+                        <button id="plus05Btn">+0.5</button>
+                        <button id="minus05Btn">-0.5</button>
+                        <button id="plus01Btn">+0.1</button>
+                        <button id="minus01Btn">-0.1</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="applyAccumulateBtn" class="apply-btn">✓ 적용</button>
+                        <button id="undoBtn" class="undo-btn">↩️ 실행 취소</button>
+                        <button id="resetAccumulateBtn" class="reset-btn">⟳ 초기화</button>
+                    </div>
+                    <div class="status" id="shiftStatus">💡 모드 선택 후 +/- → 적용</div>
+                    <div class="info-text" id="modeInfo">🌍 전체 적용: 모든 자막 이동</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="section-header">
+                <h3>📝 자막 리스트</h3>
+                <div class="translate-controls">
+                    <select id="targetLangSelect" class="language-select">
+                        <option value="zh">中文</option>
+                        <option value="en">English</option>
+                        <option value="ja">日本語</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="ko">한국어</option>
+                    </select>
+                    <button id="translateAllBtn" class="translate-all-btn">🌐 전체 번역</button>
+                    <button id="translateStopBtn" class="translate-stop-btn">⏹️ 중지</button>
+                    <button id="togglePreviewBtn" class="toggle-preview-btn">🔘 프리뷰 OFF</button>
+                </div>
+            </div>
+            <div class="sub-list" id="subtitleListContainer">
+                <div style="color: #aaa; text-align: center;">자막을 불러오면 여기에 표시됩니다.</div>
+            </div>
+            
+            <div id="progressArea" style="display: none;">
+                <div class="progress-bar-container">
+                    <div id="progressFill" class="progress-bar-fill"></div>
+                </div>
+                <div id="progressText" class="progress-text">번역 진행 중...</div>
+            </div>
+        </div>
+        
+        <div class="mobile-button-section">
+            <div class="shift-controls">
+                <div class="mode-selector">
+                    <button id="modeGlobalBtnMobile" class="mode-btn active">🌍 전체 적용</button>
+                    <button id="modeAfterBtnMobile" class="mode-btn">⏩ 이후 적용</button>
+                    <button id="modeSingleBtnMobile" class="mode-btn">🎯 단일 적용</button>
+                </div>
+                <div class="total-shift" id="totalShiftDisplayMobile">📊 누적 조정: 0.0 초</div>
+                <div class="shift-buttons">
+                    <button id="plus3BtnMobile">+3.0</button>
+                    <button id="minus3BtnMobile">-3.0</button>
+                    <button id="plus05BtnMobile">+0.5</button>
+                    <button id="minus05BtnMobile">-0.5</button>
+                    <button id="plus01BtnMobile">+0.1</button>
+                    <button id="minus01BtnMobile">-0.1</button>
+                </div>
+                <div class="action-buttons">
+                    <button id="applyAccumulateBtnMobile" class="apply-btn">✓ 적용</button>
+                    <button id="undoBtnMobile" class="undo-btn">↩️ 실행 취소</button>
+                    <button id="resetAccumulateBtnMobile" class="reset-btn">⟳ 초기화</button>
+                </div>
+                <div class="status" id="shiftStatusMobile">💡 모드 선택 후 +/- → 적용</div>
+                <div class="info-text" id="modeInfoMobile">🌍 전체 적용: 모든 자막 이동</div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        ✅ 3가지 모드: 전체 적용 | 이후 적용 (선택 자막부터 끝까지) | 단일 적용 (선택 자막만)<br>
+        ✅ ✏️ 연필: 텍스트 수정 | 🌐 번역 아이콘: 해당 자막만 번역 | 🌐 전체 번역 + 진행률 표시
+        ✅ ↩️ 실행 취소 (Ctrl+Z) : 마지막 작업 되돌리기
+        ✅ copyright © x.com/@goat_xukai
+    </footer>
+</div>
+<div id="toastMsg" class="toast" style="opacity:0;">변환중...</div>
+
+<script>
+    // ========== 전역 상태 ==========
+    let originalSubtitles = [];
+    let currentSubtitles = [];
+    let accumulatedDelta = 0.0;
+    let originalRawSRT = "";
+    let currentMode = "global";  // "global", "after", "single"
+    let selectedSubtitleIndex = -1;
+    let autoScrollEnabled = true;
+    let editingIndex = -1;
+    let currentVideoFileName = "";
+    let currentSubtitleFileName = "";
+    let previewEnabled = false;
+    let isTranslating = false;
+    let stopTranslation = false;
+    let lastActiveIndex = -1;
+    
+    // 실행 취소 (Undo) 스택
+    let undoStack = [];
+    let redoStack = [];
+    
+    // DOM 요소
+    let videoPlayer = document.getElementById('videoPlayer');
+    let subListContainer = document.getElementById('subtitleListContainer');
+    let videoFileNameSpan = document.getElementById('videoFileName');
+    let subtitleFileNameSpan = document.getElementById('subtitleFileName');
+    let subtitleCountSpan = document.getElementById('subtitleCount');
+    let previewDiv = document.getElementById('subtitlePreview');
+    let togglePreviewBtn = document.getElementById('togglePreviewBtn');
+    let targetLangSelect = document.getElementById('targetLangSelect');
+    let translateAllBtn = document.getElementById('translateAllBtn');
+    let translateStopBtn = document.getElementById('translateStopBtn');
+    let progressArea = document.getElementById('progressArea');
+    let progressFill = document.getElementById('progressFill');
+    let progressText = document.getElementById('progressText');
+    
+    // PC 버튼
+    let saveSubBtn = document.getElementById('saveSubBtn');
+    let plus3Btn = document.getElementById('plus3Btn');
+    let minus3Btn = document.getElementById('minus3Btn');
+    let plus05Btn = document.getElementById('plus05Btn');
+    let minus05Btn = document.getElementById('minus05Btn');
+    let plus01Btn = document.getElementById('plus01Btn');
+    let minus01Btn = document.getElementById('minus01Btn');
+    let applyAccumulateBtn = document.getElementById('applyAccumulateBtn');
+    let undoBtn = document.getElementById('undoBtn');
+    let resetAccumulateBtn = document.getElementById('resetAccumulateBtn');
+    let modeGlobalBtn = document.getElementById('modeGlobalBtn');
+    let modeAfterBtn = document.getElementById('modeAfterBtn');
+    let modeSingleBtn = document.getElementById('modeSingleBtn');
+    let totalShiftDisplay = document.getElementById('totalShiftDisplay');
+    let shiftStatus = document.getElementById('shiftStatus');
+    let modeInfo = document.getElementById('modeInfo');
+    
+    // 모바일 버튼
+    let mobileBtns = {
+        plus3: document.getElementById('plus3BtnMobile'),
+        minus3: document.getElementById('minus3BtnMobile'),
+        plus05: document.getElementById('plus05BtnMobile'),
+        minus05: document.getElementById('minus05BtnMobile'),
+        plus01: document.getElementById('plus01BtnMobile'),
+        minus01: document.getElementById('minus01BtnMobile'),
+        apply: document.getElementById('applyAccumulateBtnMobile'),
+        undo: document.getElementById('undoBtnMobile'),
+        reset: document.getElementById('resetAccumulateBtnMobile'),
+        modeGlobal: document.getElementById('modeGlobalBtnMobile'),
+        modeAfter: document.getElementById('modeAfterBtnMobile'),
+        modeSingle: document.getElementById('modeSingleBtnMobile'),
+        totalShift: document.getElementById('totalShiftDisplayMobile'),
+        shiftStatus: document.getElementById('shiftStatusMobile'),
+        modeInfo: document.getElementById('modeInfoMobile')
+    };
+    
+    // 상태 저장 (Undo용)
+    function pushToUndo() {
+        undoStack.push(JSON.parse(JSON.stringify(currentSubtitles)));
+        redoStack = [];  // 새 작업 시 redo 초기화
+        // 너무 쌓이면 오래된 것 제거 (최대 50개)
+        if (undoStack.length > 50) undoStack.shift();
+    }
+    
+    // 실행 취소
+    function undo() {
+        if (undoStack.length === 0) {
+            showToast('⚠️ 실행 취소할 작업이 없습니다.', 1000);
+            return false;
+        }
+        // 현재 상태를 redo 스택에 저장
+        redoStack.push(JSON.parse(JSON.stringify(currentSubtitles)));
+        // 이전 상태로 복원
+        const previousState = undoStack.pop();
+        currentSubtitles = JSON.parse(JSON.stringify(previousState));
+        renderSubtitleList(videoPlayer.currentTime);
+        updateSubtitlePreview();
+        showToast('↩️ 실행 취소됨', 800);
+        return true;
+    }
+    
+    // 다시 실행 (Redo) - 필요시 추가 가능
+    function redo() {
+        if (redoStack.length === 0) {
+            showToast('⚠️ 다시 실행할 작업이 없습니다.', 1000);
+            return false;
+        }
+        pushToUndo();  // 현재 상태를 undo에 저장
+        const nextState = redoStack.pop();
+        currentSubtitles = JSON.parse(JSON.stringify(nextState));
+        renderSubtitleList(videoPlayer.currentTime);
+        updateSubtitlePreview();
+        showToast('⏩ 다시 실행됨', 800);
+        return true;
+    }
+    
+    function syncMobileUI() {
+        if (mobileBtns.totalShift) mobileBtns.totalShift.innerText = totalShiftDisplay.innerText;
+        if (mobileBtns.shiftStatus) mobileBtns.shiftStatus.innerHTML = shiftStatus.innerHTML;
+        if (mobileBtns.modeInfo) mobileBtns.modeInfo.innerHTML = modeInfo.innerHTML;
+        
+        if (currentMode === "global") {
+            mobileBtns.modeGlobal?.classList.add('active');
+            mobileBtns.modeAfter?.classList.remove('active');
+            mobileBtns.modeSingle?.classList.remove('active');
+        } else if (currentMode === "after") {
+            mobileBtns.modeGlobal?.classList.remove('active');
+            mobileBtns.modeAfter?.classList.add('active');
+            mobileBtns.modeSingle?.classList.remove('active');
+        } else {
+            mobileBtns.modeGlobal?.classList.remove('active');
+            mobileBtns.modeAfter?.classList.remove('active');
+            mobileBtns.modeSingle?.classList.add('active');
+        }
+    }
+    
+    function showToast(message, duration = 1200) {
+        const toastDiv = document.getElementById('toastMsg');
+        toastDiv.innerText = message;
+        toastDiv.style.opacity = '1';
+        setTimeout(() => {
+            toastDiv.style.opacity = '0';
+        }, duration);
+    }
+
+    function scrollToActiveSubtitle() {
+        if (!autoScrollEnabled) return;
+        const activeItem = document.querySelector('.sub-item.active');
+        if (activeItem) {
+            activeItem.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            });
+        }
+    }
+    
+    function scrollToIndex(index) {
+        const items = document.querySelectorAll('.sub-item');
+        if (items[index]) {
+            items[index].scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    }
+    
+    // ========== 프리뷰 ==========
+    function updateSubtitlePreview() {
+        if (!previewEnabled || !currentSubtitles.length) {
+            if (previewDiv) previewDiv.classList.add('hidden');
+            return;
+        }
+        const currentTime = videoPlayer.currentTime;
+        const currentSub = currentSubtitles.find(
+            sub => sub.startSec <= currentTime && sub.endSec >= currentTime
+        );
+        if (currentSub && currentSub.text) {
+            previewDiv.innerText = currentSub.text;
+            previewDiv.classList.remove('hidden');
+        } else {
+            previewDiv.classList.add('hidden');
+        }
+    }
+    
+    function togglePreview() {
+        previewEnabled = !previewEnabled;
+        if (previewEnabled) {
+            togglePreviewBtn.innerText = '🔘 프리뷰 ON';
+            togglePreviewBtn.classList.add('active');
+            updateSubtitlePreview();
+            showToast('🔘 자막 프리뷰 켜짐', 800);
+        } else {
+            togglePreviewBtn.innerText = '🔘 프리뷰 OFF';
+            togglePreviewBtn.classList.remove('active');
+            previewDiv.classList.add('hidden');
+            showToast('🔘 자막 프리뷰 꺼짐', 800);
+        }
+    }
+    
+    function updateProgress(current, total) {
+        const percent = (current / total) * 100;
+        progressFill.style.width = `${percent}%`;
+        progressText.innerText = `번역 진행 중... ${current}/${total} (${Math.round(percent)}%)`;
+    }
+    
+    function showProgress(show) {
+        progressArea.style.display = show ? 'block' : 'none';
+    }
+    
+    // ========== 번역 (Google Translate API) ==========
+    async function translateText(text, targetLang) {
+        if (!text || text.trim() === "") return text;
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data && data[0]) {
+                let translated = "";
+                for (let i = 0; i < data[0].length; i++) {
+                    translated += data[0][i][0];
+                }
+                return translated;
+            }
+            return text;
+        } catch (error) {
+            console.error('번역 오류:', error);
+            return text;
+        }
+    }
+    
+    async function translateSingleSubtitle(index, targetLang) {
+        if (isTranslating) {
+            showToast('⚠️ 이미 번역 중입니다. 잠시만 기다려주세요.', 1000);
+            return;
+        }
+        if (!currentSubtitles.length) {
+            showToast('⚠️ 번역할 자막이 없습니다.', 1000);
+            return;
+        }
+        
+        pushToUndo();  // 번역 전 상태 저장
+        
+        isTranslating = true;
+        const originalText = currentSubtitles[index].text;
+        showToast(`🔄 ${index+1}번 자막 번역 중...`, 500);
+        const translated = await translateText(originalText, targetLang);
+        currentSubtitles[index].text = translated;
+        renderSubtitleList(videoPlayer.currentTime);
+        updateSubtitlePreview();
+        showToast(`✅ ${index+1}번 자막 번역 완료!`, 1200);
+        isTranslating = false;
+    }
+    
+    async function translateAllSubtitles(targetLang) {
+        if (isTranslating) {
+            showToast('⚠️ 이미 번역 중입니다. 잠시만 기다려주세요.', 1000);
+            return;
+        }
+        if (!currentSubtitles.length) {
+            showToast('⚠️ 번역할 자막이 없습니다. 자막을 먼저 불러오세요.', 1000);
+            return;
+        }
+        
+        pushToUndo();  // 전체 번역 전 상태 저장
+        
+        isTranslating = true;
+        stopTranslation = false;
+        translateAllBtn.disabled = true;
+        translateStopBtn.style.opacity = '1';
+        showProgress(true);
+        const total = currentSubtitles.length;
+        let completed = 0;
+        updateProgress(0, total);
+        for (let i = 0; i < total; i++) {
+            if (stopTranslation) {
+                showToast(`⏹️ 번역이 중단되었습니다. (${completed}/${total}개 완료)`, 2000);
+                break;
+            }
+            const originalText = currentSubtitles[i].text;
+            const translated = await translateText(originalText, targetLang);
+            currentSubtitles[i].text = translated;
+            completed++;
+            updateProgress(completed, total);
+            if (completed % 10 === 0 || completed === total) {
+                renderSubtitleList(videoPlayer.currentTime);
+                await new Promise(r => setTimeout(r, 30));
+            }
+        }
+        renderSubtitleList(videoPlayer.currentTime);
+        updateSubtitlePreview();
+        if (!stopTranslation) {
+            showToast(`✅ 전체 번역 완료! (${total}개 자막)`, 2000);
+        }
+        isTranslating = false;
+        translateAllBtn.disabled = false;
+        showProgress(false);
+    }
+    
+    function stopTranslate() {
+        if (isTranslating) {
+            stopTranslation = true;
+            showToast('⏹️ 번역을 중지합니다...', 1000);
+        } else {
+            showToast('⚠️ 진행 중인 번역이 없습니다.', 1000);
+        }
+    }
+    
+    async function translateAll() {
+        const targetLang = targetLangSelect.value;
+        await translateAllSubtitles(targetLang);
+    }
+
+    function parseSRT(content) {
+        const blocks = content.trim().split(/\r?\n\r?\n/);
+        const subs = [];
+        for (let block of blocks) {
+            const lines = block.split(/\r?\n/);
+            if (lines.length < 3) continue;
+            let timeLineIndex = lines.findIndex(l => l.includes('-->'));
+            if (timeLineIndex === -1) continue;
+            const timeLine = lines[timeLineIndex];
+            const timeMatch = timeLine.match(/(\d{2}:\d{2}:\d{2}[,.]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[,.]\d{3})/);
+            if (!timeMatch) continue;
+            let startStr = timeMatch[1].replace(',', '.');
+            let endStr = timeMatch[2].replace(',', '.');
+            const startSec = timeToSeconds(startStr);
+            const endSec = timeToSeconds(endStr);
+            const textLines = lines.slice(timeLineIndex + 1);
+            let text = textLines.join('\n').trim();
+            if (text === "") continue;
+            subs.push({ startSec, endSec, text });
+        }
+        return subs;
+    }
+
+    function timeToSeconds(timeStr) {
+        const parts = timeStr.split(':');
+        if (parts.length !== 3) return 0;
+        const hours = parseInt(parts[0]);
+        const minutes = parseInt(parts[1]);
+        const secMs = parts[2].split('.');
+        const seconds = parseInt(secMs[0]);
+        const ms = parseInt(secMs[1]) || 0;
+        return hours * 3600 + minutes * 60 + seconds + ms / 1000;
+    }
+
+    function secondsToTime(sec) {
+        if (sec < 0) sec = 0;
+        const hours = Math.floor(sec / 3600);
+        const minutes = Math.floor((sec % 3600) / 60);
+        const seconds = Math.floor(sec % 60);
+        const ms = Math.floor((sec - Math.floor(sec)) * 1000);
+        return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')},${ms.toString().padStart(3,'0')}`;
+    }
+
+    function subtitlesToSRT(subs) {
+        let output = "";
+        for (let i = 0; i < subs.length; i++) {
+            const sub = subs[i];
+            const startStr = secondsToTime(sub.startSec);
+            const endStr = secondsToTime(sub.endSec);
+            output += `${i+1}\n${startStr} --> ${endStr}\n${sub.text}\n\n`;
+        }
+        return output.trim();
+    }
+
+    function editSubtitleText(index, newText) {
+        if (index >= 0 && index < currentSubtitles.length) {
+            pushToUndo();  // 수정 전 상태 저장
+            currentSubtitles[index].text = newText;
+            renderSubtitleList(videoPlayer.currentTime);
+            showToast(`✏️ ${index+1}번 자막 텍스트 수정됨`, 1000);
+        }
+        editingIndex = -1;
+    }
+
+    // ========== 🔥 핵심: 모드별 적용 로직 ==========
+    function applyDeltaWithMode(deltaSec, showToastMsg = true) {
+        if (!currentSubtitles.length) {
+            if (showToastMsg) showToast("⚠️ 자막이 없습니다.", 1000);
+            return false;
+        }
+        
+        pushToUndo();  // 적용 전 상태 저장
+        
+        if (currentMode === "global") {
+            const newSubs = [...currentSubtitles];
+            for (let i = 0; i < newSubs.length; i++) {
+                newSubs[i] = {
+                    ...newSubs[i],
+                    startSec: Math.max(0, newSubs[i].startSec + deltaSec),
+                    endSec: Math.max(0, newSubs[i].endSec + deltaSec)
+                };
+            }
+            currentSubtitles = newSubs;
+            renderSubtitleList(videoPlayer.currentTime);
+            shiftStatus.innerHTML = `✅ 전체 적용 완료! (${deltaSec>0?'+':''}${deltaSec}초)`;
+            syncMobileUI();
+            if (showToastMsg) showToast(`✅ 전체 적용 완료!`, 1000);
+            return true;
+            
+        } else if (currentMode === "after") {
+            if (selectedSubtitleIndex === -1 || selectedSubtitleIndex >= currentSubtitles.length) {
+                if (showToastMsg) showToast("⚠️ 먼저 자막을 클릭해서 기준을 설정하세요.", 1500);
+                return false;
+            }
+            const startIdx = selectedSubtitleIndex;
+            const newSubs = [...currentSubtitles];
+            for (let i = startIdx; i < newSubs.length; i++) {
+                newSubs[i] = {
+                    ...newSubs[i],
+                    startSec: Math.max(0, newSubs[i].startSec + deltaSec),
+                    endSec: Math.max(0, newSubs[i].endSec + deltaSec)
+                };
+            }
+            currentSubtitles = newSubs;
+            selectedSubtitleIndex = -1;
+            renderSubtitleList(videoPlayer.currentTime);
+            shiftStatus.innerHTML = `✅ 이후 적용 완료! (#${startIdx+1}번부터 끝까지 ${deltaSec>0?'+':''}${deltaSec}초)`;
+            syncMobileUI();
+            if (showToastMsg) showToast(`✅ 이후 적용 완료!`, 1200);
+            return true;
+            
+        } else {
+            if (selectedSubtitleIndex === -1 || selectedSubtitleIndex >= currentSubtitles.length) {
+                if (showToastMsg) showToast("⚠️ 먼저 자막을 클릭해서 기준을 설정하세요.", 1500);
+                return false;
+            }
+            const idx = selectedSubtitleIndex;
+            const newSubs = [...currentSubtitles];
+            newSubs[idx] = {
+                ...newSubs[idx],
+                startSec: Math.max(0, newSubs[idx].startSec + deltaSec),
+                endSec: Math.max(0, newSubs[idx].endSec + deltaSec)
+            };
+            currentSubtitles = newSubs;
+            selectedSubtitleIndex = -1;
+            renderSubtitleList(videoPlayer.currentTime);
+            shiftStatus.innerHTML = `✅ 단일 적용 완료! (#${idx+1}번만 ${deltaSec>0?'+':''}${deltaSec}초)`;
+            syncMobileUI();
+            if (showToastMsg) showToast(`✅ ${idx+1}번 자막만 적용 완료!`, 1200);
+            return true;
+        }
+    }
+
+    function renderSubtitleList(currentTimeSec = null) {
+        if (!currentSubtitles.length) {
+            subListContainer.innerHTML = '<div style="color: #aaa; text-align: center;">자막 없음. SRT 파일을 불러오세요.</div>';
+            return;
+        }
+        
+        let currentActiveIndex = -1;
+        let html = '';
+        
+        for (let i = 0; i < currentSubtitles.length; i++) {
+            const sub = currentSubtitles[i];
+            let isActive = false;
+            let isSelected = (selectedSubtitleIndex === i);
+            let isEditing = (editingIndex === i);
+            
+            if (currentTimeSec !== null && sub.startSec <= currentTimeSec && sub.endSec >= currentTimeSec) {
+                isActive = true;
+                currentActiveIndex = i;
+            }
+            
+            let activeClass = '';
+            if (isActive) activeClass = 'active';
+            if (isSelected) activeClass = 'selected';
+            if (isEditing) activeClass += ' editing-mode';
+            
+            const startStr = secondsToTime(sub.startSec);
+            const endStr = secondsToTime(sub.endSec);
+            
+            const textDisplay = isEditing 
+                ? `<input type="text" class="edit-input" id="edit-input-${i}" value="${escapeHtml(sub.text)}" autofocus>`
+                : `<span class="sub-text">${escapeHtml(sub.text)}</span>`;
+            
+            html += `
+                <div class="sub-item ${activeClass}" data-index="${i}">
+                    <div class="sub-header">
+                        <div style="flex:1;">
+                            <strong>${i+1}</strong> ${textDisplay}
+                        </div>
+                        <div class="icon-group">
+                            <button class="icon-btn" data-translate="${i}" style="background:none;" title="번역">🌐</button>
+                            <button class="icon-btn" data-edit="${i}" style="background:none;" title="수정">✏️</button>
+                        </div>
+                    </div>
+                    <div class="sub-time">${startStr} → ${endStr}</div>
+                </div>
+            `;
+        }
+        subListContainer.innerHTML = html;
+        
+        document.querySelectorAll('.sub-item').forEach(el => {
+            const idx = parseInt(el.dataset.index);
+            if (isNaN(idx)) return;
+            
+            el.addEventListener('click', (e) => {
+                if (editingIndex !== -1) {
+                    e.stopPropagation();
+                    return;
+                }
+                if (e.target.classList.contains('icon-btn') || e.target.closest('.icon-btn')) return;
+                
+                if (currentSubtitles[idx]) {
+                    videoPlayer.currentTime = currentSubtitles[idx].startSec;
+                    videoPlayer.play();
+                    showToast(`🎬 ${idx+1}번 자막으로 이동`, 800);
+                    
+                    selectedSubtitleIndex = idx;
+                    renderSubtitleList(videoPlayer.currentTime);
+                    
+                    let modeMsg = "";
+                    if (currentMode === "global") modeMsg = "🌍 전체 적용 모드 (선택 무시)";
+                    else if (currentMode === "after") modeMsg = `⏩ 이후 적용 모드: ${idx+1}번부터 적용`;
+                    else modeMsg = `🎯 단일 적용 모드: ${idx+1}번만 적용`;
+                    shiftStatus.innerHTML = `🎯 기준 자막: ${idx+1}번 | ${modeMsg}`;
+                    syncMobileUI();
+                    showToast(`기준 자막: ${idx+1}번 설정됨`, 1000);
+                    
+                    setTimeout(() => {
+                        scrollToIndex(idx);
+                    }, 50);
+                }
+            });
+        });
+        
+        document.querySelectorAll('[data-translate]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.translate);
+                if (!isNaN(idx) && currentSubtitles[idx]) {
+                    const targetLang = targetLangSelect.value;
+                    await translateSingleSubtitle(idx, targetLang);
+                }
+            });
+        });
+        
+        document.querySelectorAll('[data-edit]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.edit);
+                
+                if (editingIndex === idx) return;
+                
+                if (currentSubtitles[idx]) {
+                    videoPlayer.currentTime = currentSubtitles[idx].startSec;
+                    videoPlayer.pause();
+                    showToast(`✏️ ${idx+1}번 자막 수정 모드`, 800);
+                }
+                
+                scrollToIndex(idx);
+                
+                editingIndex = idx;
+                renderSubtitleList(videoPlayer.currentTime);
+                
+                setTimeout(() => {
+                    const input = document.getElementById(`edit-input-${idx}`);
+                    if (input) {
+                        input.focus();
+                        input.addEventListener('click', (e) => { e.stopPropagation(); });
+                        input.addEventListener('mousedown', (e) => { e.stopPropagation(); });
+                        const saveEdit = () => {
+                            if (editingIndex === idx) {
+                                editSubtitleText(idx, input.value);
+                            }
+                        };
+                        input.addEventListener('blur', saveEdit);
+                        input.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                saveEdit();
+                            }
+                        });
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === 'Done' || e.key === 'Go') {
+                                e.preventDefault();
+                                saveEdit();
+                            }
+                        });
+                    }
+                }, 50);
+            });
+        });
+        
+        if (currentActiveIndex !== -1 && currentActiveIndex !== lastActiveIndex) {
+            lastActiveIndex = currentActiveIndex;
+            setTimeout(() => { scrollToActiveSubtitle(); }, 50);
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function onVideoTimeUpdate() {
+        if (!currentSubtitles.length) return;
+        if (editingIndex !== -1) return;
+        renderSubtitleList(videoPlayer.currentTime);
+        updateSubtitlePreview();
+    }
+
+    function loadSubtitleFile(file) {
+        if (!file) return;
+        currentSubtitleFileName = file.name;
+        subtitleFileNameSpan.innerText = currentSubtitleFileName;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            originalRawSRT = content;
+            const parsed = parseSRT(content);
+            if (parsed.length === 0) {
+                alert('SRT 형식이 아닙니다.');
+                subtitleFileNameSpan.innerText = "없음 (파싱 실패)";
+                subtitleCountSpan.innerText = "";
+                return;
+            }
+            originalSubtitles = parsed;
+            currentSubtitles = JSON.parse(JSON.stringify(originalSubtitles));
+            accumulatedDelta = 0.0;
+            selectedSubtitleIndex = -1;
+            editingIndex = -1;
+            lastActiveIndex = -1;
+            undoStack = [];  // 새 파일 로드 시 undo 초기화
+            redoStack = [];
+            totalShiftDisplay.innerText = `📊 누적 조정: 0.0 초`;
+            shiftStatus.innerHTML = `✅ 자막 로드됨 (${currentSubtitles.length}개)`;
+            renderSubtitleList(videoPlayer.currentTime);
+            subtitleCountSpan.innerText = `✅ ${currentSubtitles.length}개 로드 완료`;
+            syncMobileUI();
+            showToast(`자막 로드 성공 (${currentSubtitles.length}개)`, 1200);
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    function saveSubtitle() {
+        if (!currentSubtitles.length) {
+            alert('저장할 자막이 없습니다.');
+            return;
+        }
+        const srtContent = subtitlesToSRT(currentSubtitles);
+        const blob = new Blob([srtContent], {type: 'text/plain'});
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        const saveName = currentSubtitleFileName ? currentSubtitleFileName.replace('.srt', '_adjusted.srt') : 'adjusted_subtitle.srt';
+        a.download = saveName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('💾 자막 저장 완료!', 1200);
+    }
+
+    function addToAccumulate(delta) {
+        if (!originalSubtitles.length) {
+            showToast('자막을 먼저 불러오세요.', 1000);
+            return;
+        }
+        accumulatedDelta += delta;
+        totalShiftDisplay.innerText = `📊 누적: ${accumulatedDelta > 0 ? '+' : ''}${accumulatedDelta.toFixed(1)} 초`;
+        shiftStatus.innerHTML = `⏱️ 누적값 = ${accumulatedDelta.toFixed(1)}초 → [적용]`;
+        syncMobileUI();
+        showToast(`누적: ${accumulatedDelta > 0 ? '+' : ''}${accumulatedDelta.toFixed(1)}초`, 800);
+    }
+
+    function applyAccumulated() {
+        if (!originalSubtitles.length) {
+            showToast('자막 파일을 먼저 불러오세요.', 1000);
+            return;
+        }
+        if (accumulatedDelta === 0) {
+            showToast('조정값이 0입니다. +/- 버튼으로 누적값을 먼저 설정하세요.', 1000);
+            return;
+        }
+        applyDeltaWithMode(accumulatedDelta, true);
+        accumulatedDelta = 0;
+        totalShiftDisplay.innerText = `📊 누적 조정: 0.0 초`;
+        shiftStatus.innerHTML += `<br>🔄 누적 초기화`;
+        syncMobileUI();
+    }
+
+    function resetAccumulate() {
+        accumulatedDelta = 0;
+        totalShiftDisplay.innerText = `📊 누적 조정: 0.0 초`;
+        shiftStatus.innerHTML = `누적값 초기화됨. +/- 버튼으로 조정 후 [적용]`;
+        syncMobileUI();
+        showToast(`누적값 리셋 (0초)`, 800);
+    }
+
+    function setMode(mode) {
+        currentMode = mode;
+        if (mode === "global") {
+            modeGlobalBtn.classList.add('active');
+            modeAfterBtn.classList.remove('active');
+            modeSingleBtn.classList.remove('active');
+            modeInfo.innerHTML = "🌍 전체 적용: 모든 자막 이동";
+            shiftStatus.innerHTML = "🌍 전체 적용 모드 활성화";
+        } else if (mode === "after") {
+            modeGlobalBtn.classList.remove('active');
+            modeAfterBtn.classList.add('active');
+            modeSingleBtn.classList.remove('active');
+            modeInfo.innerHTML = "⏩ 이후 적용: 선택한 자막부터 끝까지 이동 (광고 대응!)";
+            shiftStatus.innerHTML = "⏩ 이후 적용 모드: 자막을 클릭하면 기준 설정됨";
+        } else {
+            modeGlobalBtn.classList.remove('active');
+            modeAfterBtn.classList.remove('active');
+            modeSingleBtn.classList.add('active');
+            modeInfo.innerHTML = "🎯 단일 적용: 선택한 자막 하나만 이동";
+            shiftStatus.innerHTML = "🎯 단일 적용 모드: 자막을 클릭하면 기준 설정됨";
+        }
+        syncMobileUI();
+        renderSubtitleList(videoPlayer.currentTime);
+    }
+
+    // 파일 입력 이벤트
+    document.getElementById('videoInput').addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            const file = e.target.files[0];
+            currentVideoFileName = file.name;
+            videoFileNameSpan.innerText = currentVideoFileName;
+            const url = URL.createObjectURL(file);
+            videoPlayer.src = url;
+            videoPlayer.load();
+        }
+    });
+    document.getElementById('subInput').addEventListener('change', (e) => {
+        if (e.target.files.length) loadSubtitleFile(e.target.files[0]);
+    });
+    
+    // 버튼 이벤트
+    saveSubBtn.addEventListener('click', saveSubtitle);
+    plus3Btn.addEventListener('click', () => addToAccumulate(3.0));
+    minus3Btn.addEventListener('click', () => addToAccumulate(-3.0));
+    plus05Btn.addEventListener('click', () => addToAccumulate(0.5));
+    minus05Btn.addEventListener('click', () => addToAccumulate(-0.5));
+    plus01Btn.addEventListener('click', () => addToAccumulate(0.1));
+    minus01Btn.addEventListener('click', () => addToAccumulate(-0.1));
+    applyAccumulateBtn.addEventListener('click', applyAccumulated);
+    undoBtn.addEventListener('click', undo);
+    resetAccumulateBtn.addEventListener('click', resetAccumulate);
+    modeGlobalBtn.addEventListener('click', () => setMode("global"));
+    modeAfterBtn.addEventListener('click', () => setMode("after"));
+    modeSingleBtn.addEventListener('click', () => setMode("single"));
+    togglePreviewBtn.addEventListener('click', togglePreview);
+    translateAllBtn.addEventListener('click', translateAll);
+    translateStopBtn.addEventListener('click', stopTranslate);
+    
+    // 키보드 단축키 (Ctrl+Z)
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'z') {
+            e.preventDefault();
+            undo();
+        }
+    });
+    
+    // 모바일 버튼 이벤트
+    if (mobileBtns.plus3) mobileBtns.plus3.addEventListener('click', () => addToAccumulate(3.0));
+    if (mobileBtns.minus3) mobileBtns.minus3.addEventListener('click', () => addToAccumulate(-3.0));
+    if (mobileBtns.plus05) mobileBtns.plus05.addEventListener('click', () => addToAccumulate(0.5));
+    if (mobileBtns.minus05) mobileBtns.minus05.addEventListener('click', () => addToAccumulate(-0.5));
+    if (mobileBtns.plus01) mobileBtns.plus01.addEventListener('click', () => addToAccumulate(0.1));
+    if (mobileBtns.minus01) mobileBtns.minus01.addEventListener('click', () => addToAccumulate(-0.1));
+    if (mobileBtns.apply) mobileBtns.apply.addEventListener('click', applyAccumulated);
+    if (mobileBtns.undo) mobileBtns.undo.addEventListener('click', undo);
+    if (mobileBtns.reset) mobileBtns.reset.addEventListener('click', resetAccumulate);
+    if (mobileBtns.modeGlobal) mobileBtns.modeGlobal.addEventListener('click', () => setMode("global"));
+    if (mobileBtns.modeAfter) mobileBtns.modeAfter.addEventListener('click', () => setMode("after"));
+    if (mobileBtns.modeSingle) mobileBtns.modeSingle.addEventListener('click', () => setMode("single"));
+    
+    videoPlayer.addEventListener('timeupdate', onVideoTimeUpdate);
+    videoPlayer.addEventListener('loadedmetadata', () => {
+        if (currentSubtitles.length) renderSubtitleList(videoPlayer.currentTime);
+    });
+    
+    setMode("global");
+</script>
+</body>
+</html>
